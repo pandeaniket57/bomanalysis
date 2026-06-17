@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BOM Report — Color Palette Customizer | Power Electronical</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, #f0f0ec 0%, #e4e4df 100%);
+    min-height: 100vh;
+}
+
+/* Header */
+.topbar {
+    background: linear-gradient(135deg, #19196e, #2e2e9a);
+    color: #fff;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.topbar h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.topbar .sub {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+
+.topbar-right {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #cc3300;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #e63b00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(204, 51, 0, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-ghost {
+    background: #fff;
+    color: #19196e;
+    border: 1px solid #d0d0e8;
+}
+
+.btn-ghost:hover {
+    background: #f0f0ff;
+    transform: translateY(-2px);
+}
+
+/* Layout */
+.layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 80px);
+}
+
+/* Left Panel */
+.panel {
+    background: #fff;
+    padding: 28px;
+    overflow-y: auto;
+    border-right: 1px solid #e0e0ec;
+    max-height: calc(100vh - 80px);
+}
+
+.panel-section {
+    margin-bottom: 32px;
+}
+
+.panel-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #888;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0ec;
+}
+
+/* Color Rows */
+.color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fafafa;
+    border: 1px solid #f0f0ec;
+    transition: all 0.2s;
+}
+
+.color-row:hover {
+    border-color: #c8c8e8;
+    background: #f5f5ff;
+}
+
+.color-swatch-wrap {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.color-swatch-wrap input[type=color] {
+    position: absolute;
+    inset: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.color-preview {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.color-info {
+    flex: 1;
+}
+
+.color-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #19196e;
+}
+
+.color-desc {
+    font-size: 10px;
+    color: #888;
+    margin-top: 3px;
+}
+
+.color-hex-input {
+    width: 95px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d8d8e8;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    background: #fff;
+}
+
+.color-hex-input:focus {
+    outline: none;
+    border-color: #19196e;
+    box-shadow: 0 0 0 3px rgba(25, 25, 110, 0.1);
+}
+
+/* Preset Themes */
+.presets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.preset-btn {
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    background: #fafafa;
+}
+
+.preset-btn:hover {
+    border-color: #19196e;
+    background: #f5f5ff;
+}
+
+.preset-btn.active {
+    border-color: #19196e;
+    background: linear-gradient(135deg, #f0f0ff, #e8e8ff);
+}
+
+.preset-swatch {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.preset-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.preset-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+}
+
+.preset-tag {
+    font-size: 9px;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* Right Panel - Live Preview */
+.preview-panel {
+    background: #e8e8e4;
+    padding: 28px;
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+}
+
+.preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+/* Tabs */
+.preview-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.preview-tab {
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e0e0dc;
+    color: #555;
+    transition: all 0.15s;
+}
+
+.preview-tab.active {
+    background: #19196e;
+    color: #fff;
+}
+
+/* PDF Mock */
+.pdf-mock {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+/* Cover Preview */
+.pdf-cover {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pdf-cover-top {
+    flex: 1;
+    padding: 40px 32px;
+    min-height: 280px;
+}
+
+.pdf-cover-company {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.pdf-cover-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 10px;
+}
+
+.pdf-cover-sub {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.pdf-accent-bar {
+    height: 5px;
+}
+
+.pdf-cover-bottom {
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pdf-cover-meta {
+    font-size: 11px;
+}
+
+.pdf-cover-badge {
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Content Preview */
+.pdf-header {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pdf-header-left .company {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.7;
+}
+
+.pdf-header-left .report {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 3px;
+}
+
+.pdf-header-right .pg {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+.pdf-body {
+    padding: 20px 24px;
+}
+
+.pdf-section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pdf-section-bar {
+    width: 5px;
+    height: 28px;
+    border-radius: 3px;
+}
+
+.pdf-section-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.pdf-divider {
+    height: 1px;
+    margin-bottom: 20px;
+}
+
+.pdf-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.pdf-stat {
+    flex: 1;
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+}
+
+.pdf-stat .val {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.pdf-stat .lbl {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    opacity: 0.75;
+}
+
+.pdf-table-head {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1.5fr 1fr 1fr;
+    gap: 0;
+    padding: 10px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 6px 6px 0 0;
+}
+
+.pdf-table-row {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1.5fr 1fr 1fr;
+    gap: 0;
+    padding: 10px 12px;
+    font-size: 10px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}
+
+.pdf-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.pdf-footer {
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    border-top-width: 1px;
+    border-top-style: solid;
+    font-size: 9px;
+}
+
+/* Export Code */
+.export-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.export-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #19196e;
+    margin-bottom: 12px;
+}
+
+.css-output {
+    background: #1e1e2e;
+    color: #a6e3a1;
+    padding: 16px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 12px;
+    max-height: 400px;
+}
+
+.copy-btn {
+    background: #19196e;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.copy-btn:hover {
+    background: #2e2e9a;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+    .panel {
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid #e0e0ec;
+    }
+    .preview-panel {
+        max-height: none;
+    }
+    .topbar {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* Toast message */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #1a6b3c;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1000;
+    animation: fadeInOut 2s ease;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div>
+        <h1>🎨 Power Electronical — BOM Color Palette Studio</h1>
+        <div class="sub">Choose your brand colors → Live preview → Apply to PDF report</div>
+    </div>
+    <div class="topbar-right">
+        <button class="btn btn-secondary" onclick="resetToDefault()">↺ Reset to Default</button>
+        <button class="btn btn-primary" onclick="applyAndClose()">✓ Apply & Go to Report</button>
+    </div>
+</div>
+
+<div class="layout">
+    <!-- LEFT PANEL: Controls -->
+    <div class="panel">
+        <!-- Preset Themes -->
+        <div class="panel-section">
+            <div class="panel-section-title">🎨 Quick Presets</div>
+            <div class="presets" id="presets-container"></div>
+        </div>
+
+        <!-- Primary Colors -->
+        <div class="panel-section">
+            <div class="panel-section-title">🔷 Primary — Brand Colors</div>
+            <div id="rows-primary"></div>
+        </div>
+
+        <!-- Accent Colors -->
+        <div class="panel-section">
+            <div class="panel-section-title">🔴 Accent — Highlights & Buttons</div>
+            <div id="rows-accent"></div>
+        </div>
+
+        <!-- Neutral Colors -->
+        <div class="panel-section">
+            <div class="panel-section-title">⚪ Neutrals — Text & Backgrounds</div>
+            <div id="rows-neutral"></div>
+        </div>
+
+        <!-- Status Colors -->
+        <div class="panel-section">
+            <div class="panel-section-title">🟢 Status — Lifecycle & Risk Indicators</div>
+            <div id="rows-status"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Live Preview -->
+    <div class="preview-panel">
+        <div class="preview-label">📄 Live PDF Preview</div>
+        <div class="preview-tabs">
+            <button class="preview-tab active" onclick="switchTab('cover')">📖 Cover Page</button>
+            <button class="preview-tab" onclick="switchTab('content')">📋 Content Page</button>
+            <button class="preview-tab" onclick="switchTab('code')">💾 Export Code</button>
+        </div>
+
+        <!-- Cover Preview Tab -->
+        <div id="tab-cover">
+            <div class="pdf-mock">
+                <div class="pdf-cover">
+                    <div class="pdf-cover-top" id="prev-cover-top">
+                        <div class="pdf-cover-company" id="prev-cover-company">POWER ELECTRONICAL</div>
+                        <div class="pdf-cover-title" id="prev-cover-title">BOM Analysis Report</div>
+                        <div class="pdf-cover-sub" id="prev-cover-sub">20-Dimension Bill of Materials Analysis</div>
+                    </div>
+                    <div class="pdf-accent-bar" id="prev-cover-bar"></div>
+                    <div class="pdf-cover-bottom" id="prev-cover-bottom">
+                        <div class="pdf-cover-meta" id="prev-cover-meta">
+                            <div style="font-size: 10px; opacity: 0.6;">Generated: June 2026</div>
+                            <div style="font-size: 10px; margin-top: 3px; opacity: 0.6;">Total Parts: 248</div>
+                        </div>
+                        <div class="pdf-cover-badge" id="prev-cover-badge">CONFIDENTIAL</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Preview Tab -->
+        <div id="tab-content" style="display: none;">
+            <div class="pdf-mock">
+                <div class="pdf-header" id="prev-header">
+                    <div class="pdf-header-left">
+                        <div class="company" id="prev-hdr-company">POWER ELECTRONICAL</div>
+                        <div class="report" id="prev-hdr-report">BOM Analysis Report</div>
+                    </div>
+                    <div class="pdf-header-right">
+                        <div class="pg" id="prev-hdr-pg">Page 3 of 12</div>
+                    </div>
+                </div>
+                <div class="pdf-accent-bar" id="prev-content-bar"></div>
+                <div class="pdf-body">
+                    <div class="pdf-section-head">
+                        <div class="pdf-section-bar" id="prev-section-bar"></div>
+                        <div class="pdf-section-title" id="prev-section-title">Cost Analysis</div>
+                    </div>
+                    <div class="pdf-divider" id="prev-divider"></div>
+
+                    <div class="pdf-stats">
+                        <div class="pdf-stat" id="prev-stat-1">
+                            <div class="val" id="prev-stat-1-val">$42,500</div>
+                            <div class="lbl">Total BOM Cost</div>
+                        </div>
+                        <div class="pdf-stat" id="prev-stat-2">
+                            <div class="val">248</div>
+                            <div class="lbl">Total Parts</div>
+                        </div>
+                        <div class="pdf-stat" id="prev-stat-accent">
+                            <div class="val">7</div>
+                            <div class="lbl">EOL Risk</div>
+                        </div>
+                    </div>
+
+                    <div class="pdf-table-head" id="prev-table-head">
+                        <span>Part No.</span><span>Description</span><span>Supplier</span><span>Qty</span><span>Status</span>
+                    </div>
+                    <div class="pdf-table-row" id="prev-row-1">
+                        <span>R0402-10K</span><span>Resistor 10K 1%</span><span>Vishay</span><span>1000</span>
+                        <span><span class="pdf-badge" id="prev-badge-active">Active</span></span>
+                    </div>
+                    <div class="pdf-table-row" id="prev-row-2">
+                        <span>STM32F407</span><span>MCU 32-bit ARM</span><span>STMicro</span><span>3</span>
+                        <span><span class="pdf-badge" id="prev-badge-nrnd">NRND</span></span>
+                    </div>
+                    <div class="pdf-table-row" id="prev-row-3">
+                        <span>LT3080</span><span>Linear Regulator</span><span>Analog</span><span>5</span>
+                        <span><span class="pdf-badge" id="prev-badge-eol">EOL</span></span>
+                    </div>
+                </div>
+                <div class="pdf-footer" id="prev-footer">
+                    <span id="prev-footer-left">Power Electronical — BOM Analysis Report</span>
+                    <span id="prev-footer-right">Page 3 of 12</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Code Tab -->
+        <div id="tab-code" style="display: none;">
+            <div class="export-box">
+                <h3>📋 Copy this palette code — paste into pdf-export.js</h3>
+                <div class="css-output" id="code-output"></div>
+                <button class="copy-btn" onclick="copyCode()">📋 Copy to Clipboard</button>
+                <p style="font-size: 11px; color: #666; margin-top: 12px;">
+                    After copying, paste into pdf-export.js to apply your custom colors to PDF reports.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// COLOR PALETTE DEFINITIONS
+// ============================================================
+
+const ROLES = {
+    primary: [
+        { key: 'navy', label: 'Navy Core', desc: 'Cover bg, page headers, table headers', default: '#19196e' },
+        { key: 'mid', label: 'Navy Mid', desc: 'Gradient overlays, hover states', default: '#2e2e9a' },
+        { key: 'steel', label: 'Navy Steel', desc: 'Subtle text on dark backgrounds', default: '#b4b4dc' },
+    ],
+    accent: [
+        { key: 'accent', label: 'Accent Core', desc: 'Section bars, CTA buttons, highlights', default: '#cc3300' },
+        { key: 'accentLight', label: 'Accent Light', desc: 'Warning badges, NRND status', default: '#ff9966' },
+        { key: 'accentTint', label: 'Accent Tint', desc: 'Risk row backgrounds', default: '#ffe5d9' },
+    ],
+    neutral: [
+        { key: 'light', label: 'Background', desc: 'Page bg, warm alternating rows', default: '#f5f2e6' },
+        { key: 'white', label: 'Card White', desc: 'Table rows, card backgrounds', default: '#ffffff' },
+        { key: 'text', label: 'Body Text', desc: 'Primary text throughout', default: '#282828' },
+        { key: 'muted', label: 'Muted Text', desc: 'Captions, footer, secondary labels', default: '#646464' },
+    ],
+    status: [
+        { key: 'statusActive', label: 'Active / Pass', desc: 'Active parts, RoHS compliant', default: '#1a6b3c' },
+        { key: 'statusWarn', label: 'Warning / NRND', desc: 'NRND, long lead time, low stock', default: '#b58a00' },
+        { key: 'statusCrit', label: 'Critical / EOL', desc: 'EOL, single-source, shortage', default: '#cc3300' },
+        { key: 'statusInfo', label: 'Info / Alt', desc: 'Alternate parts, informational tags', default: '#5a5ab5' },
+    ]
+};
+
+const PRESETS = {
+    power: {
+        navy: '#19196e', mid: '#2e2e9a', steel: '#b4b4dc',
+        accent: '#cc3300', accentLight: '#ff9966', accentTint: '#ffe5d9',
+        light: '#f5f2e6', white: '#ffffff', text: '#282828', muted: '#646464',
+        statusActive: '#1a6b3c', statusWarn: '#b58a00', statusCrit: '#cc3300', statusInfo: '#5a5ab5'
+    },
+    midnight: {
+        navy: '#0d1b2a', mid: '#1a3a5c', steel: '#4fc3f7',
+        accent: '#4fc3f7', accentLight: '#b3e5fc', accentTint: '#e1f5fe',
+        light: '#e8f4f8', white: '#ffffff', text: '#0d1b2a', muted: '#546e7a',
+        statusActive: '#00c853', statusWarn: '#ffab00', statusCrit: '#ff1744', statusInfo: '#29b6f6'
+    },
+    slate: {
+        navy: '#2d3748', mid: '#4a5568', steel: '#a0aec0',
+        accent: '#e53e3e', accentLight: '#fc8181', accentTint: '#fff5f5',
+        light: '#f7f8fa', white: '#ffffff', text: '#1a202c', muted: '#718096',
+        statusActive: '#38a169', statusWarn: '#d69e2e', statusCrit: '#e53e3e', statusInfo: '#4299e1'
+    },
+    forest: {
+        navy: '#1b4332', mid: '#2d6a4f', steel: '#95d5b2',
+        accent: '#d4a017', accentLight: '#f0c040', accentTint: '#fffbeb',
+        light: '#f0f7f4', white: '#ffffff', text: '#1b2e20', muted: '#52796f',
+        statusActive: '#2d6a4f', statusWarn: '#d4a017', statusCrit: '#bc4749', statusInfo: '#457b9d'
+    },
+    mono: {
+        navy: '#111111', mid: '#333333', steel: '#999999',
+        accent: '#555555', accentLight: '#888888', accentTint: '#eeeeee',
+        light: '#f5f5f5', white: '#ffffff', text: '#111111', muted: '#666666',
+        statusActive: '#222222', statusWarn: '#555555', statusCrit: '#000000', statusInfo: '#777777'
+    },
+    ocean: {
+        navy: '#003366', mid: '#004080', steel: '#80b3d9',
+        accent: '#f97316', accentLight: '#fdba74', accentTint: '#fff7ed',
+        light: '#e8f4fd', white: '#ffffff', text: '#0d2137', muted: '#5a7fa0',
+        statusActive: '#059669', statusWarn: '#d97706', statusCrit: '#dc2626', statusInfo: '#0369a1'
+    }
+};
+
+// Current colors state
+let C = {};
+
+// Initialize from default
+function init() {
+    const allRoles = [...ROLES.primary, ...ROLES.accent, ...ROLES.neutral, ...ROLES.status];
+    allRoles.forEach(role => {
+        C[role.key] = role.default;
+    });
+    buildPresets();
+    buildColorRows();
+    updatePreview();
+    updateCode();
+}
+
+// Build preset buttons
+function buildPresets() {
+    const container = document.getElementById('presets-container');
+    container.innerHTML = '';
+    const presetList = [
+        { id: 'power', name: 'Power Electronical', tag: 'Navy + Red-Orange', colors: PRESETS.power },
+        { id: 'midnight', name: 'Midnight Tech', tag: 'Deep Navy + Cyan', colors: PRESETS.midnight },
+        { id: 'slate', name: 'Slate Corporate', tag: 'Charcoal + Red', colors: PRESETS.slate },
+        { id: 'forest', name: 'Forest & Gold', tag: 'Deep Green + Amber', colors: PRESETS.forest },
+        { id: 'mono', name: 'Monochrome', tag: 'Pure Black & White', colors: PRESETS.mono },
+        { id: 'ocean', name: 'Ocean Depth', tag: 'Marine Blue + Amber', colors: PRESETS.ocean }
+    ];
+    
+    presetList.forEach(preset => {
+        const btn = document.createElement('div');
+        btn.className = 'preset-btn';
+        btn.id = `preset-${preset.id}`;
+        btn.onclick = () => applyPreset(preset.id);
+        
+        // Create swatch dots
+        const swatchDiv = document.createElement('div');
+        swatchDiv.className = 'preset-swatch';
+        const colorKeys = ['navy', 'accent', 'light', 'statusActive'];
+        colorKeys.forEach(key => {
+            const dot = document.createElement('div');
+            dot.className = 'preset-dot';
+            dot.style.background = preset.colors[key];
+            swatchDiv.appendChild(dot);
+        });
+        
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'preset-name';
+        nameDiv.textContent = preset.name;
+        
+        const tagDiv = document.createElement('div');
+        tagDiv.className = 'preset-tag';
+        tagDiv.textContent = preset.tag;
+        
+        btn.appendChild(swatchDiv);
+        btn.appendChild(nameDiv);
+        btn.appendChild(tagDiv);
+        container.appendChild(btn);
+    });
+    
+    // Highlight active (power by default)
+    document.getElementById('preset-power')?.classList.add('active');
+}
+
+// Build all color rows
+function buildColorRows() {
+    const groups = ['primary', 'accent', 'neutral', 'status'];
+    groups.forEach(group => {
+        const container = document.getElementById(`rows-${group}`);
+        if (!container) return;
+        container.innerHTML = '';
+        
+        ROLES[group].forEach(role => {
+            const row = document.createElement('div');
+            row.className = 'color-row';
+            row.innerHTML = `
+                <div class="color-swatch-wrap">
+                    <div class="color-preview" id="swatch-${role.key}" style="background: ${C[role.key]}"></div>
+                    <input type="color" id="picker-${role.key}" value="${C[role.key]}" oninput="onColorChange('${role.key}', this.value)">
+                </div>
+                <div class="color-info">
+                    <div class="color-label">${role.label}</div>
+                    <div class="color-desc">${role.desc}</div>
+                </div>
+                <input type="text" class="color-hex-input" id="hex-${role.key}" value="${C[role.key]}" 
+                    oninput="onHexInput('${role.key}', this.value)" onblur="validateHex('${role.key}', this.value)">
+            `;
+            container.appendChild(row);
+        });
+    });
+}
+
+// Handle color picker change
+function onColorChange(key, value) {
+    C[key] = value;
+    document.getElementById(`hex-${key}`).value = value;
+    document.getElementById(`swatch-${key}`).style.background = value;
+    updatePreview();
+    updateCode();
+    clearPresetActive();
+}
+
+// Handle hex input
+function onHexInput(key, value) {
+    if (/^#[0-9a-fA-F]{6}$/i.test(value)) {
+        C[key] = value;
+        document.getElementById(`picker-${key}`).value = value;
+        document.getElementById(`swatch-${key}`).style.background = value;
+        updatePreview();
+        updateCode();
+        clearPresetActive();
+    }
+}
+
+function validateHex(key, value) {
+    if (!/^#[0-9a-fA-F]{6}$/i.test(value)) {
+        document.getElementById(`hex-${key}`).value = C[key];
+    }
+}
+
+// Apply preset
+function applyPreset(presetName) {
+    const preset = PRESETS[presetName];
+    if (!preset) return;
+    
+    Object.assign(C, preset);
+    
+    // Update all UI elements
+    Object.keys(preset).forEach(key => {
+        const picker = document.getElementById(`picker-${key}`);
+        const hex = document.getElementById(`hex-${key}`);
+        const swatch = document.getElementById(`swatch-${key}`);
+        if (picker) picker.value = preset[key];
+        if (hex) hex.value = preset[key];
+        if (swatch) swatch.style.background = preset[key];
+    });
+    
+    updatePreview();
+    updateCode();
+    
+    // Highlight active preset
+    document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById(`preset-${presetName}`);
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
+function clearPresetActive() {
+    document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+}
+
+function resetToDefault() {
+    applyPreset('power');
+}
+
+// Update live preview
+function updatePreview() {
+    // Cover
+    const coverTop = document.getElementById('prev-cover-top');
+    if (coverTop) {
+        coverTop.style.background = C.navy;
+        coverTop.style.color = C.white;
+    }
+    document.getElementById('prev-cover-company').style.color = C.steel;
+    document.getElementById('prev-cover-title').style.color = C.white;
+    document.getElementById('prev-cover-sub').style.color = C.steel;
+    document.getElementById('prev-cover-bar').style.background = C.accent;
+    
+    const coverBottom = document.getElementById('prev-cover-bottom');
+    if (coverBottom) {
+        coverBottom.style.background = C.light;
+        coverBottom.style.color = C.text;
+    }
+    document.getElementById('prev-cover-badge').style.background = C.accent;
+    document.getElementById('prev-cover-badge').style.color = C.white;
+    
+    // Content header
+    const header = document.getElementById('prev-header');
+    if (header) {
+        header.style.background = C.navy;
+        header.style.color = C.white;
+    }
+    document.getElementById('prev-hdr-company').style.color = C.steel;
+    document.getElementById('prev-hdr-report').style.color = C.white;
+    document.getElementById('prev-hdr-pg').style.color = C.steel;
+    document.getElementById('prev-content-bar').style.background = C.accent;
+    
+    // Section
+    document.getElementById('prev-section-bar').style.background = C.accent;
+    document.getElementById('prev-section-title').style.color = C.navy;
+    document.getElementById('prev-divider').style.background = C.light;
+    
+    // Stats
+    const stat1 = document.getElementById('prev-stat-1');
+    if (stat1) {
+        stat1.style.background = C.navy;
+        stat1.style.color = C.white;
+    }
+    const stat2 = document.getElementById('prev-stat-2');
+    if (stat2) {
+        stat2.style.background = C.mid;
+        stat2.style.color = C.white;
+    }
+    const statAccent = document.getElementById('prev-stat-accent');
+    if (statAccent) {
+        statAccent.style.background = C.accent;
+        statAccent.style.color = C.white;
+    }
+    
+    // Table
+    document.getElementById('prev-table-head').style.background = C.navy;
+    document.getElementById('prev-table-head').style.color = C.white;
+    
+    const row1 = document.getElementById('prev-row-1');
+    if (row1) {
+        row1.style.background = C.white;
+        row1.style.color = C.text;
+    }
+    const row2 = document.getElementById('prev-row-2');
+    if (row2) {
+        row2.style.background = C.light;
+        row2.style.color = C.text;
+    }
+    const row3 = document.getElementById('prev-row-3');
+    if (row3) {
+        row3.style.background = C.white;
+        row3.style.color = C.text;
+    }
+    
+    // Badges
+    const activeBadge = document.getElementById('prev-badge-active');
+    if (activeBadge) {
+        activeBadge.style.background = C.statusActive + '22';
+        activeBadge.style.color = C.statusActive;
+    }
+    const nrndBadge = document.getElementById('prev-badge-nrnd');
+    if (nrndBadge) {
+        nrndBadge.style.background = C.statusWarn + '22';
+        nrndBadge.style.color = C.statusWarn;
+    }
+    const eolBadge = document.getElementById('prev-badge-eol');
+    if (eolBadge) {
+        eolBadge.style.background = C.statusCrit + '22';
+        eolBadge.style.color = C.statusCrit;
+    }
+    
+    // Footer
+    const footer = document.getElementById('prev-footer');
+    if (footer) {
+        footer.style.background = C.white;
+        footer.style.borderColor = C.light;
+    }
+    document.getElementById('prev-footer-left').style.color = C.muted;
+    document.getElementById('prev-footer-right').style.color = C.muted;
+}
+
+// Generate export code
+function updateCode() {
+    const lines = ['// Paste this into pdf-export.js', 'const C = {'];
+    
+    const colorKeys = ['navy', 'mid', 'steel', 'light', 'white', 'text', 'muted', 
+                       'accent', 'accentLight', 'accentTint', 
+                       'statusActive', 'statusWarn', 'statusCrit', 'statusInfo'];
+    
+    colorKeys.forEach(key => {
+        if (C[key]) {
+            const hex = C[key];
+            const r = parseInt(hex.slice(1,3), 16);
+            const g = parseInt(hex.slice(3,5), 16);
+            const b = parseInt(hex.slice(5,7), 16);
+            lines.push(`    ${key}: [${r}, ${g}, ${b}],  // ${hex}`);
+        }
+    });
+    
+    lines.push('};');
+    
+    document.getElementById('code-output').textContent = lines.join('\n');
+}
+
+// Copy code to clipboard
+function copyCode() {
+    const code = document.getElementById('code-output').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        showToast('✓ Code copied to clipboard!');
+    }).catch(() => {
+        showToast('Failed to copy. Select manually.', 'error');
+    });
+}
+
+// Show toast notification
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+// Switch tabs
+function switchTab(tabName) {
+    document.getElementById('tab-cover').style.display = tabName === 'cover' ? 'block' : 'none';
+    document.getElementById('tab-content').style.display = tabName === 'content' ? 'block' : 'none';
+    document.getElementById('tab-code').style.display = tabName === 'code' ? 'block' : 'none';
+    
+    document.querySelectorAll('.preview-tab').forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+// Apply and save to sessionStorage
+function applyAndClose() {
+    // Save RGB values
+    const rgbPalette = {};
+    const hexPalette = {};
+    
+    const colorKeys = ['navy', 'mid', 'steel', 'light', 'white', 'text', 'muted', 
+                       'accent', 'accentLight', 'accentTint', 
+                       'statusActive', 'statusWarn', 'statusCrit', 'statusInfo'];
+    
+    colorKeys.forEach(key => {
+        if (C[key]) {
+            hexPalette[key] = C[key];
+            const r = parseInt(C[key].slice(1,3), 16);
+            const g = parseInt(C[key].slice(3,5), 16);
+            const b = parseInt(C[key].slice(5,7), 16);
+            rgbPalette[key] = [r, g, b];
+        }
+    });
+    
+    sessionStorage.setItem('bomPalette', JSON.stringify(rgbPalette));
+    sessionStorage.setItem('bomPaletteHex', JSON.stringify(hexPalette));
+    
+    showToast('✓ Palette saved! Your colors will be used in PDF reports.');
+    
+    // Optionally redirect back to index
+    setTimeout(() => {
+        if (confirm('Palette saved! Go back to the main report?')) {
+            window.location.href = 'index.html';
+        }
+    }, 500);
+}
+
+// Initialize everything
+init();
+</script>
+</body>
+</html>
